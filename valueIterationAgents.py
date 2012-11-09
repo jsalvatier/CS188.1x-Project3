@@ -39,7 +39,8 @@ class ValueIterationAgent(ValueEstimationAgent):
     for i in range(0, self.iterations):
         for state in self.mdp.getStates():  
             if self.mdp.isTerminal(state):
-                self.values[state] =  self.mdp.getReward()
+                self.values[state] = 0
+                continue
             
             maxActionValue = -1*float('inf')
             maxAction = None
@@ -57,7 +58,7 @@ class ValueIterationAgent(ValueEstimationAgent):
             self.values[state] = v_kPlus1
 
     foo = 3
-                    
+                  
   def getValue(self, state):
     """
       Return the value of the state (computed in __init__).
