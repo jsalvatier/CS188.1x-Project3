@@ -100,6 +100,10 @@ class ValueIterationAgent(ValueEstimationAgent):
     maxActionValue = -1*float('inf')
     maxAction = None
     possibleActions = self.mdp.getPossibleActions(state)
+
+    if not possibleActions:
+        return None
+
     for action in possibleActions:
         actionSumSPrime = self.getQValue(state, action)
                     
