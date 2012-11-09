@@ -37,8 +37,8 @@ class ValueIterationAgent(ValueEstimationAgent):
     self.values = util.Counter() # A Counter is a dict with default 0
     
     for i in range(0, self.iterations):
-        import copy
-        newValues = copy.deepcopy(self.values)
+        #import copy
+        newValues = util.Counter()
         for state in self.mdp.getStates():  
             if self.mdp.isTerminal(state):
                 newValues[state] = 0
@@ -51,7 +51,6 @@ class ValueIterationAgent(ValueEstimationAgent):
                 newValues[state] = 0
 
             for action in possibleActions:
-                
                 actionSumSPrime = self.getQValue(state, action)
                             
                 #Find the maximum action
@@ -84,7 +83,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         TransitionProb = transition[1]
         statePrime = transition[0]
         gamma = self.discount
-        reward = self.mdp.getReward(state, action, statePrime) + self.mdp.livingReward
+        reward = self.mdp.getReward(state, action, statePrime) 
         actionSumSPrime += TransitionProb * (reward + (gamma * self.values[statePrime]))
 
     return actionSumSPrime
