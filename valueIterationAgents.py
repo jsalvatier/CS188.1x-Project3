@@ -41,14 +41,14 @@ class ValueIterationAgent(ValueEstimationAgent):
         newValues = copy.deepcopy(self.values)
         for state in self.mdp.getStates():  
             if self.mdp.isTerminal(state):
-                self.values[state] = 0
+                newValues[state] = 0
                 continue
             
             maxActionValue = -1*float('inf')
             maxAction = None
             possibleActions = self.mdp.getPossibleActions(state)
             if not possibleActions:
-                self.values[state] = 0
+                newValues[state] = 0
 
             for action in possibleActions:
                 
@@ -101,7 +101,7 @@ class ValueIterationAgent(ValueEstimationAgent):
     maxAction = None
     possibleActions = self.mdp.getPossibleActions(state)
 
-    if not possibleActions:
+    if not possibleActions or self.mdp.isTerminal(state):
         return None
 
     for action in possibleActions:
