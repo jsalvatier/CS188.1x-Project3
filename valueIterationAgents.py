@@ -37,6 +37,8 @@ class ValueIterationAgent(ValueEstimationAgent):
     self.values = util.Counter() # A Counter is a dict with default 0
     
     for i in range(0, self.iterations):
+        import copy
+        newValues = copy.deepcopy(self.values)
         for state in self.mdp.getStates():  
             if self.mdp.isTerminal(state):
                 self.values[state] = 0
@@ -55,9 +57,8 @@ class ValueIterationAgent(ValueEstimationAgent):
                     maxActionValue = actionSumSPrime
 
             v_kPlus1 = maxActionValue
-            self.values[state] = v_kPlus1
-
-    foo = 3
+            newValues[state] = v_kPlus1
+        self.values = newValues
                   
   def getValue(self, state):
     """
