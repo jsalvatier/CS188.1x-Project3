@@ -35,9 +35,24 @@ class ValueIterationAgent(ValueEstimationAgent):
     self.discount = discount
     self.iterations = iterations
     self.values = util.Counter() # A Counter is a dict with default 0
-     
-    "*** YOUR CODE HERE ***"
     
+    for state in self.mdp.getStates():
+        self.values[state] = 0
+        for i in range(0, self.iterations): 
+            maxActionValue = -1*float('inf')
+            maxAction = None
+            possibleActions = mdp.getPossibleActions(state)
+            for action in possibleActions:
+                actionSumSPrime = self.getQValue(state, action)
+                            
+                #Find the maximum action
+                if maxActionValue < actionSumSPrime:
+                    maxAction = action
+                    maxActionValue = actionSumSPrime
+
+            v_kPlus1 = maxActionValue
+            self.values[state] = v_kPlus1
+                    
   def getValue(self, state):
     """
       Return the value of the state (computed in __init__).
@@ -54,7 +69,15 @@ class ValueIterationAgent(ValueEstimationAgent):
       to derive it on the fly.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    actionSumSPrime = 0
+    for transition in self.mdp.getTransitionStatesAndProbs(state, action):
+        TransitionProb = transition[1]
+        statePrime = transition[0]
+        gamma = self.discount
+        reward = self.mdp.getReward(state, action, statePrime) + self.mdp.livingReward
+        actionSumSPrime += TransitionProb * (reward + (gamma * self.values[state]))
+
+    return actionSumSPrime
 
   def getPolicy(self, state):
     """
