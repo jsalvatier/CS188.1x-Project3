@@ -52,7 +52,8 @@ class QLearningAgent(ReinforcementAgent):
         qValueList = self.qValues[state]
         if qValues.contains(action):
             return qValuesList[action]
-        else return 0.0 
+        else:
+            return 0.0 
     else:
         return 0.0
 
