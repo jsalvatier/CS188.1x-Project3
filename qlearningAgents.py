@@ -50,7 +50,7 @@ class QLearningAgent(ReinforcementAgent):
     "*** YOUR CODE HERE ***"
     if self.qValues.has_key(state) and len(self.qValues[state]):
         qValueList = self.qValues[state]
-        if qValues.contains(action)
+        if qValues.contains(action):
             return qValuesList[action]
         else return 0.0 
     else:
