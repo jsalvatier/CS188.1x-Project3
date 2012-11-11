@@ -50,7 +50,7 @@ class QLearningAgent(ReinforcementAgent):
     "*** YOUR CODE HERE ***"
     if self.qValues.has_key(state) and len(self.qValues[state]):
         qValueList = self.qValues[state]
-        if qValues.contains(action):
+        if self.qValues.has_key(action):
             return qValuesList[action]
         else:
             return 0.0 
@@ -69,7 +69,7 @@ class QLearningAgent(ReinforcementAgent):
     for action in self.getLegalActions(state):
         expectedQVal = self.getQValue(state, action)
         if actionReward < expectedQVal:
-            actionReward = expectedQValues
+            actionReward = expectedQVal
     
     if actionReward == float('-inf'):
         return 0.0
@@ -81,9 +81,10 @@ class QLearningAgent(ReinforcementAgent):
         self.qValues[state] = {}
 
     if not self.qValues[state].has_key(action):
-        self.qValues[state][action] = {}
+        self.qValues[state][action] = 0
     
-    return self.qValues[state][action] = updatedValue
+    self.qValues[state][action] = updatedValue
+    return updatedValue 
 
   def getPolicy(self, state):
     """
