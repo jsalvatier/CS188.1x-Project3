@@ -126,10 +126,10 @@ class QLearningAgent(ReinforcementAgent):
         return None
 
     if isHeads:
-        print "Taking the known policy"
+        #print "Taking the known policy"
         return self.getPolicy(state)
     else:
-        print "Taking the random choice"
+        #print "Taking the random choice"
         return random.choice(legalActions)
 
   def update(self, state, action, nextState, reward):
