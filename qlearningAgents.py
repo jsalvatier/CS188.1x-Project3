@@ -48,9 +48,9 @@ class QLearningAgent(ReinforcementAgent):
       a state or (state,action) tuple
     """
     "*** YOUR CODE HERE ***"
-    if self.qValues.has_key(state) and len(self.qValues[state]):
-        qValueList = self.qValues[state]
-        if self.qValues.has_key(action):
+    if self.qValues.has_key(state) and len(self.qValues[state]) > 0:
+        qValuesList = self.qValues[state]
+        if qValuesList.has_key(action):
             return qValuesList[action]
         else:
             return 0.0 
@@ -65,6 +65,8 @@ class QLearningAgent(ReinforcementAgent):
       there are no legal actions, which is the case at the
       terminal state, you should return a value of 0.0.
     """
+
+
     actionReward = float('-inf')
     for action in self.getLegalActions(state):
         expectedQVal = self.getQValue(state, action)
@@ -124,8 +126,11 @@ class QLearningAgent(ReinforcementAgent):
         return None
 
     if isHeads:
+        print "Taking the known policy"
         return self.getPolicy(state)
-    return random.choice(legalActions)
+    else:
+        print "Taking the random choice"
+        return random.choice(legalActions)
 
   def update(self, state, action, nextState, reward):
     """
@@ -143,6 +148,7 @@ class QLearningAgent(ReinforcementAgent):
 
     newQValue = (1 - alpha)*oldQValue + alpha*(reward + gamma*valueSPrimeAPrime)
     self.setQValue(state, action, newQValue)
+    foo = 5
 
 class PacmanQAgent(QLearningAgent):
   "Exactly the same as QLearningAgent, but with different default parameters"
