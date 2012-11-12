@@ -37,9 +37,9 @@ class QLearningAgent(ReinforcementAgent):
     "You can initialize Q-values here..."
     ReinforcementAgent.__init__(self, **args)
     self.qValues     = {}
-    self.setEpsilon(args['epsilon'])
-    self.setLearningRate(args['alpha'])
-    self.setDiscount(args['gamma'])
+    #self.setEpsilon(args['epsilon'])
+    #self.setLearningRate(args['alpha'])
+    #self.setDiscount(args['gamma'])
 
   def getQValue(self, state, action):
     """
