@@ -101,9 +101,15 @@ class QLearningAgent(ReinforcementAgent):
     maxAction = None
     for action in self.getLegalActions(state):
         val = self.getQValue(state, action)
-        if maxActionValue < val:
+        if maxActionValue == val:
+            randPolicy = random.choice([maxAction, action])
+            if randPolicy == action:
+                maxAction = action
+                maxActionValue = val
+        elif maxActionValue < val:
             maxActionValue = val
             maxAction = action
+    
 
     return maxAction
 
@@ -127,10 +133,11 @@ class QLearningAgent(ReinforcementAgent):
 
     if isHeads:
         #print "Taking the known policy"
-        return self.getPolicy(state)
+        return random.choice(legalActions)
     else:
         #print "Taking the random choice"
-        return random.choice(legalActions)
+        return self.getPolicy(state)
+        
 
   def update(self, state, action, nextState, reward):
     """
