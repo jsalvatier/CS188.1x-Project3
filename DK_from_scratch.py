@@ -1,5 +1,6 @@
 import numpy
 np = numpy
+import gridworld
 
 
 # hyper-parameters:
@@ -96,6 +97,29 @@ total_observed_reward = 0
 def expected_reward(state, action): 
     return (total_r_observed[state][action] + .5 ) / ( nqueries[state][action] + 1)
 
+
+
+action_names = ['north', 'south', 'east', 'west']
+class QDummy(object): 
+    def getQValue(self, state, action):
+        s = state[0] + state[1]*grid_width
+
+        a = action_names.index(action)+1
+
+
+        return Q_values[s][a]
+
+dummy_agent = QDummy()
+dummy_grid = gridworld.Gridworld([[' '] *grid_width ] * grid_width)
+
+def reverse(t): 
+    return (t[1], t[0])
+
+import graphicsGridworldDisplay
+display = graphicsGridworldDisplay.GraphicsGridworldDisplay(dummy_grid, 75, 10.0)
+display.start()
+
+
 def update_q(state0, action, state1, reward, query): 
     if query: 
         reward = expected_reward(state0, action)
@@ -134,6 +158,8 @@ for step in range(nsteps):
 
         #simple q-learner 
         update_q(old_state, action, current_state, reward, query)
+
+        display.displayQValues(dummy_agent, reverse(row_and_column(current_state)), "q vals")
 
 total_nqueries = sum([ sum(nqueries_s) for nqueries_s in nqueries])
 total_query_cost = query_cost * total_nqueries
