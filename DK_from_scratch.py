@@ -25,12 +25,10 @@ reward_probabilities = np.random.binomial(1, 1 - prob_zero_reward, len(states)) 
 def row_and_column(state):
 	return state / grid_width, state % grid_width
 
-"""
 def state_from_row_and_column(row, column):
 	state = row * grid_width + column
 	assert 0 <= state and state <= len(states) 
 	return state
-"""
 
 actions = range(5) # stay, N, E, S, W
 
@@ -99,13 +97,11 @@ def expected_reward(state, action):
 
 
 
-action_names = ['north', 'south', 'east', 'west']
+action_names = [ 'south',  'north','east','west']
 class QDummy(object): 
     def getQValue(self, state, action):
-        s = state[0] + state[1]*grid_width
-
+        s = state_from_row_and_column(*state)
         a = action_names.index(action)+1
-
 
         return Q_values[s][a]
 
@@ -161,7 +157,7 @@ for step in range(nsteps):
 
 for i in range(8):
     print reward_probabilities[i*7:(i+1)*7]
-display.displayQValues(dummy_agent, reverse(row_and_column(current_state)), "q vals")
+display.displayQValues(dummy_agent, row_and_column(current_state), "q vals")
 print total_r_observed
 display.pause()
 
