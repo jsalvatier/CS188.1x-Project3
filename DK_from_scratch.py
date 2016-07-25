@@ -97,13 +97,23 @@ def expected_reward(state, action):
 
 
 
-action_names = [ 'south',  'north','east','west']
+action_names = [ 'north', 'east', 'south', 'west']
 class QDummy(object): 
     def getQValue(self, state, action):
-        s = state_from_row_and_column(*state)
+        s = state_from_graphical_state(state)
         a = action_names.index(action)+1
 
         return Q_values[s][a]
+
+def state_from_graphical_state(state):
+    x,y = state
+    row = grid_width-1 - y
+    col = x
+    return state_from_row_and_column(row, col)
+
+def graphical_state(state):
+    row, col = row_and_column(state)
+    return (col, grid_width-1-row)
 
 dummy_agent = QDummy()
 dummy_grid = gridworld.Gridworld([[' '] *grid_width ] * grid_width)
@@ -157,7 +167,7 @@ for step in range(nsteps):
 
 for i in range(8):
     print reward_probabilities[i*7:(i+1)*7]
-display.displayQValues(dummy_agent, row_and_column(current_state), "q vals")
+display.displayQValues(dummy_agent, graphical_state(current_state), "q vals")
 print total_r_observed
 display.pause()
 
