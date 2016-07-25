@@ -4,11 +4,13 @@ np = numpy
 
 # hyper-parameters:
 grid_width = 10
-prob_random_action = 0.
+prob_random_action = 0.1
 prob_random_reset = 0.
 query_cost = .01
 gamma = .99 # discount factor
 prob_zero_reward = .9
+
+learning_rate = .1
 
 # states (lexical order)
 states = range(grid_width**2)
@@ -88,13 +90,19 @@ total_observed_reward = 0
 
 # TODO: discounting
 # TODO: more policies
+
+def update_q(state0, action, state1, reward): 
+    old = Q_values[state0][action] 
+    new = reward + np.max(Q_values[state1])
+    Q_values[state0][action] = (1-learning_rate)*old + learning_rate*new
+
 for step in range(nsteps):
 	# uniform random policy:
 	action = np.argmax(np.random.multinomial(1, [.2,.2,.2,.2,.2]))
 	# "thompson-sampling" greedy (proportional agent):
 	action = np.argmax(np.random.multinomial(1, policy[current_state]))
 	# greedy policy:
-	action = np.argmax(policy[current_state])
+	action = np.argmax(Q_values[current_state])
 	if np.random.binomial(1, prob_random_action, 1)[0]: # take a random action
 		action = np.argmax(np.random.multinomial(1, [.2, .2, .2, .2, .2], 1))
 
@@ -106,11 +114,15 @@ for step in range(nsteps):
 	total_reward += reward 
 	observed_reward = query * reward
 	total_observed_reward += observed_reward 
+        old_state = current_state
 	current_state = next_state(current_state, action)
 	if np.random.binomial(1, prob_random_reset, 1)[0]: # reset to initial state
 		current_state = 0
 
 	# TODO: learning
+
+        #simple q-learner 
+        update_q(old_state, action, current_state, reward)
 
 total_nqueries = sum([ sum(nqueries_s) for nqueries_s in nqueries])
 total_query_cost = query_cost * total_nqueries
