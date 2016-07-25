@@ -4,9 +4,9 @@ import gridworld
 
 
 # hyper-parameters:
-grid_width = 10
+grid_width = 3
 prob_random_action = 0.1
-prob_random_reset = 0.
+prob_random_reset = 0.001
 query_cost = .01
 gamma = .99 # discount factor
 prob_zero_reward = .9
@@ -95,7 +95,7 @@ total_observed_reward = 0
 # TODO: more policies
 
 def expected_reward(state, action): 
-    return (total_r_observed[state][action] + .5 ) / ( nqueries[state][action] + 1)
+    return (total_r_observed[state][action] + .5 ) / ( nqueries[state][action] + 10)
 
 
 
@@ -119,9 +119,8 @@ import graphicsGridworldDisplay
 display = graphicsGridworldDisplay.GraphicsGridworldDisplay(dummy_grid, 75, 10.0)
 display.start()
 
-
 def update_q(state0, action, state1, reward, query): 
-    if query: 
+    if not query: 
         reward = expected_reward(state0, action)
 
     old = Q_values[state0][action] 
@@ -151,7 +150,8 @@ for step in range(nsteps):
 
         old_state = current_state
 	current_state = next_state(current_state, action)
-	if np.random.binomial(1, prob_random_reset, 1)[0]: # reset to initial state
+
+        if np.random.uniform(0,1) < prob_random_reset: #np.random.binomial(1, prob_random_reset, 1)[0]: # reset to initial state
 		current_state = 0
 
 	# TODO: learning
@@ -159,7 +159,11 @@ for step in range(nsteps):
         #simple q-learner 
         update_q(old_state, action, current_state, reward, query)
 
-        display.displayQValues(dummy_agent, reverse(row_and_column(current_state)), "q vals")
+for i in range(8):
+    print reward_probabilities[i*7:(i+1)*7]
+display.displayQValues(dummy_agent, reverse(row_and_column(current_state)), "q vals")
+print total_r_observed
+display.pause()
 
 total_nqueries = sum([ sum(nqueries_s) for nqueries_s in nqueries])
 total_query_cost = query_cost * total_nqueries
