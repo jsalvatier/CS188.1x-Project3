@@ -79,6 +79,8 @@ def query_fn(s, a, step):
 policy = [[.2, .2, .2, .2, .2] for state in states]
 
 Q_values = [[0,0,0,0,0] for state in states]
+total_r_observed = [[0,0,0,0,0] for state in states] 
+
 nqueries = [[0,0,0,0,0] for state in states]
 #policy = {state: [.2, .2, .2, .2, .2] for state in states}
 #nqueries = {state: [0,0,0,0,0] for state in states}
@@ -91,9 +93,16 @@ total_observed_reward = 0
 # TODO: discounting
 # TODO: more policies
 
-def update_q(state0, action, state1, reward): 
+def expected_reward(state, action): 
+    return (total_r_observed[state][action] + .5 ) / ( nqueries[state][action] + 1)
+
+def update_q(state0, action, state1, reward, query): 
+    if query: 
+        reward = expected_reward(state0, action)
+
     old = Q_values[state0][action] 
-    new = reward + np.max(Q_values[state1])
+    new = reward + gamma*np.max(Q_values[state1])
+
     Q_values[state0][action] = (1-learning_rate)*old + learning_rate*new
 
 for step in range(nsteps):
@@ -107,13 +116,15 @@ for step in range(nsteps):
 		action = np.argmax(np.random.multinomial(1, [.2, .2, .2, .2, .2], 1))
 
 	query = query_fn(current_state, action, step)
-	if query:
-		nqueries[state][action] += 1
 	# +1 thing??
 	reward = np.random.binomial(1, reward_probabilities[current_state], 1)
 	total_reward += reward 
-	observed_reward = query * reward
-	total_observed_reward += observed_reward 
+
+	if query:
+                nqueries[state][action] += 1
+                total_r_observed[current_state][action] += reward
+                total_observed_reward += reward 
+
         old_state = current_state
 	current_state = next_state(current_state, action)
 	if np.random.binomial(1, prob_random_reset, 1)[0]: # reset to initial state
@@ -122,7 +133,7 @@ for step in range(nsteps):
 	# TODO: learning
 
         #simple q-learner 
-        update_q(old_state, action, current_state, reward)
+        update_q(old_state, action, current_state, reward, query)
 
 total_nqueries = sum([ sum(nqueries_s) for nqueries_s in nqueries])
 total_query_cost = query_cost * total_nqueries
@@ -131,7 +142,7 @@ total_query_cost = query_cost * total_nqueries
 
 performance = total_reward - total_query_cost
 print "total_reward =", total_reward
-print "total_reward =", total_nqueries
-print performance
+print "total_nqueries =", total_nqueries
+print "performance =", performance
 
 
